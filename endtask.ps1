@@ -1,13 +1,4 @@
 taskkill /F /T /IM UltraViewer_Desktop.exe & taskkill /F /T /IM UltraViewerService.exe
-
-sc stop UltraViewer_Service & sc config UltraViewer_Service start= demand & taskkill /F /IM UltraViewer_Desktop.exe & taskkill /F /IM UltraViewer_Service.exe
-
-sc stop UltraViewService & sc config UltraViewService start= demand
-
-sc config UltraViewService start= demand
-
-sc stop UltraViewService
-
 taskkill /F /IM msedge.exe & taskkill /F /IM chrome.exe & taskkill /F /IM WhatsApp.exe
 
 taskkill /F /IM chrome.exe /IM msedge.exe /IM firefox.exe /IM WhatsApp.exe /IM Teams.exe /IM Discord.exe /IM Zoom.exe /IM Steam.exe /IM Spotify.exe
@@ -58,6 +49,13 @@ taskkill /F /IM Zoom.exe
 taskkill /F /IM HPSystemEventUtilityHost.exe
 taskkill /F /IM msedge.exe
 net stop AnyDesk
+sc stop UltraViewer_Service & sc config UltraViewer_Service start= demand & taskkill /F /IM UltraViewer_Desktop.exe & taskkill /F /IM UltraViewer_Service.exe
+
+sc stop UltraViewService & sc config UltraViewService start= demand
+
+sc config UltraViewService start= demand
+
+sc stop UltraViewService
 
 taskkill /F /IM conhost.exe
 
