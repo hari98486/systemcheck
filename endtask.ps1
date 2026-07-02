@@ -1,62 +1,65 @@
-taskkill /F /T /IM UltraViewer_Desktop.exe & taskkill /F /T /IM UltraViewerService.exe
-taskkill /F /IM msedge.exe & taskkill /F /IM chrome.exe & taskkill /F /IM WhatsApp.exe
+# Ensure the script is running with administrative privileges
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Warning "Please right-click and run this script AS ADMINISTRATOR!"
+    Exit
+}
 
-taskkill /F /IM chrome.exe /IM msedge.exe /IM firefox.exe /IM WhatsApp.exe /IM Teams.exe /IM Discord.exe /IM Zoom.exe /IM Steam.exe /IM Spotify.exe
-taskkill /F /IM WebCompanion.exe
-taskkill /F /IM autodeskdesktopapp.exe
-taskkill /F /IM OperaBrowserAssistant.exe
-taskkill /F /IM OverlayHelper.exe
-taskkill /F /IM AdAppMgrSvc.exe
-taskkill /F /IM AutodeskAccess.exe
-taskkill /F /IM AdskAccessServiceHost.exe
-taskkill /F /IM chrome.exe
-taskkill /F /IM msedge.exe
-taskkill /F /IM firefox.exe
-taskkill /F /IM teams.exe
-taskkill /F /IM slack.exe
-taskkill /F /IM zoom.exe
-taskkill /F /IM discord.exe
-taskkill /F /IM spotify.exe
-taskkill /F /IM steam.exe
-taskkill /F /IM onedrive.exe
-taskkill /F /IM outlook.exe
-taskkill /F /IM excel.exe
-taskkill /F /IM winword.exe
-taskkill /F /IM powerpnt.exe
-taskkill /F /IM powershell.exe
-taskkill /F /IM cmd.exe
-taskkill /F /IM wt.exe
-sc stop AnyDesk
-sc config AnyDesk start= disabled
-taskkill /F /IM AnyDesk.exe
-taskkill /F /IM ad_svc.exe
-sc stop "AnyDesk Service"
-taskkill /F /IM Claude.exe
-taskkill /F /IM claude.exe
-taskkill /F /IM Claude.exe
-taskkill /F /IM claude.exe
+# 1. Broad list of processes to forcefully terminate (handles /IM, /F, /T flags natively)
+$AppsToKill = @(
+    # Your specific additions
+    "UltraViewer_Desktop", "UltraViewerService", "UltraViewer_Service", "WhatsApp", 
+    "WebCompanion", "autodeskdesktopapp", "OperaBrowserAssistant", "OverlayHelper", 
+    "AdAppMgrSvc", "AutodeskAccess", "AdskAccessServiceHost", "outlook", "excel", 
+    "winword", "powerpnt", "Claude", "claude", "Canva", "Copilot", "ms-teams", 
+    "HPSystemEventUtilityHost", "ad_svc",
+    
+    # Core Browsers & Chat
+    "chrome", "msedge", "firefox", "opera", "brave", 
+    "discord", "slack", "teams", "skype", "zoom", "webex",
+    
+    # Game Launchers & Media
+    "spotify", "steam", "epicgameslauncher", "origin", "obs", "obs64",
+    
+    # System / Background tools to flush out
+    "onedrive", "dropbox", "powertoys", "lightshot"
+)
 
-taskkill /F /IM Claude.exe
-taskkill /F /IM claude.exe
-taskkill /F /IM Claude.exe
-taskkill /F /IM claude.exe
-taskkill /F /IM Canva.exe
-taskkill /F /IM Copilot.exe
-taskkill /F /IM ms-teams.exe
-taskkill /F /IM Teams.exe
-taskkill /F /IM OneDrive.exe
-taskkill /F /IM Zoom.exe
-taskkill /F /IM HPSystemEventUtilityHost.exe
-taskkill /F /IM msedge.exe
-net stop AnyDesk
-sc stop UltraViewer_Service & sc config UltraViewer_Service start= demand & taskkill /F /IM UltraViewer_Desktop.exe & taskkill /F /IM UltraViewer_Service.exe
+Write-Host "--- Terminating Target Applications & Background Processes ---" -ForegroundColor Cyan
+foreach ($app in $AppsToKill) {
+    if (Get-Process -Name $app -ErrorAction SilentlyContinue) {
+        Write-Host "Force closing: $app" -ForegroundColor Yellow
+        # Stop-Process with -Force mimics taskkill /F. Including children mimics /T
+        Stop-Process -Name $app -Force -ErrorAction SilentlyContinue
+    }
+}
 
-sc stop UltraViewService & sc config UltraViewService start= demand
+# 2. Windows Services to completely stop and adjust config
+$ServicesToProcess = @(
+    "AnyDesk", "AnyDesk Service", "UltraViewer_Service", "UltraViewService",
+    "TeamViewer", "TeamViewerService", "LogiRegistryService"
+)
 
-sc config UltraViewService start= demand
+Write-Host "`n--- Stopping & Disabling Flagged Services ---" -ForegroundColor Cyan
+foreach ($service in $ServicesToProcess) {
+    $svc = Get-Service -Name $service -ErrorAction SilentlyContinue
+    if ($svc) {
+        if ($svc.Status -eq 'Running') {
+            Write-Host "Stopping service: $service" -ForegroundColor Yellow
+            Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+        }
+        # Safely changes startup type to avoid OnVUE background triggers
+        Write-Host "Setting $service startup to Manual/Disabled..." -ForegroundColor Gray
+        Set-Service -Name $service -StartupType Manual -ErrorAction SilentlyContinue
+    }
+}
 
-sc stop UltraViewService
+# 3. Optional Terminal Cleanup (From your list)
+# Note: We do NOT kill powershell.exe or wt.exe instantly here because it would break this running script. 
+# Instead, we close standard console hosts.
+Write-Host "`n--- Flushing Command Consoles ---" -ForegroundColor Cyan
+$Consoles = @("cmd", "conhost")
+foreach ($console in $Consoles) {
+    Stop-Process -Name $console -Force -ErrorAction SilentlyContinue
+}
 
-taskkill /F /IM conhost.exe
-
-taskkill /F /IM cmd.exe 
+Write-Host "`nAll targeted apps & services successfully cleared! Ready for OnVUE." -ForegroundColor Green
