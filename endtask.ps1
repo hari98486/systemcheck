@@ -4,8 +4,12 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Exit
 }
 
-# 1. Comprehensive list of target processes (including OverlayHelper, Glider, and dependencies)
+# 1. Comprehensive list of target processes to terminate forcefully
 $AppsToKill = @(
+    # --- Newly Added (GlideX, ADB, Zoom VDI) ---
+    "glidexremoteservice", "glidexservice", "glidexnearservice", "glidexserviceext", 
+    "cptservice", "adb", "glidex",
+
     # --- Glider & Proctoring/Assessment Helpers ---
     "glider", "glider-agent", "GliderAI", "GliderService", "GliderHelper",
     "OverlayHelper", "OverlayHelperService", "Overlay", "GameBarOverlayServer",
@@ -37,8 +41,12 @@ foreach ($app in $AppsToKill) {
     }
 }
 
-# 2. Stop & Disable Services (Glider, Overlay, Remote Desktop & System Utilities)
+# 2. Stop & Disable Windows Services
 $ServicesToProcess = @(
+    # --- Newly Added Services ---
+    "glidexremoteservice", "glidexservice", "glidexnearservice", "glidexserviceext",
+    "cptservice",
+
     # Glider & Overlay Services
     "GliderService", "GliderAgent", "GliderUpdater", "OverlayHelperSvc", "OverlayHelper",
 
@@ -60,10 +68,9 @@ foreach ($service in $ServicesToProcess) {
     }
 }
 
-# 3. Terminate Scheduled Tasks related to OverlayHelper and Glider
-# (Prevents background tasks from auto-restarting during OnVUE)
+# 3. Terminate Scheduled Tasks related to background helpers
 Write-Host "`n--- Checking & Disabling Background Scheduled Tasks ---" -ForegroundColor Cyan
-$TaskKeywords = @("Glider", "OverlayHelper", "Overlay", "UltraViewer", "AnyDesk")
+$TaskKeywords = @("Glider", "glidex", "OverlayHelper", "Overlay", "UltraViewer", "AnyDesk", "cptservice")
 
 foreach ($keyword in $TaskKeywords) {
     $tasks = Get-ScheduledTask | Where-Object { $_.TaskName -like "*$keyword*" } -ErrorAction SilentlyContinue
@@ -80,4 +87,4 @@ foreach ($console in $Consoles) {
     Stop-Process -Name $console -Force -ErrorAction SilentlyContinue
 }
 
-Write-Host "`nAll targeted apps, Glider/Overlay processes, and services successfully cleared! Ready for OnVUE." -ForegroundColor Green
+Write-Host "`nAll targeted apps, GlideX/Glider/Overlay processes, and services successfully cleared! Ready for OnVUE." -ForegroundColor Green
