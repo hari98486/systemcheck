@@ -4,21 +4,26 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Exit
 }
 
-# 1. Broad list of processes to forcefully terminate (handles /IM, /F, /T flags natively)
+# 1. Comprehensive list of target processes (including OverlayHelper, Glider, and dependencies)
 $AppsToKill = @(
-    # Your specific additions
+    # --- Glider & Proctoring/Assessment Helpers ---
+    "glider", "glider-agent", "GliderAI", "GliderService", "GliderHelper",
+    "OverlayHelper", "OverlayHelperService", "Overlay", "GameBarOverlayServer",
+
+    # Your specific additions & Remote tools
     "UltraViewer_Desktop", "UltraViewerService", "UltraViewer_Service", "WhatsApp", 
-    "WebCompanion", "autodeskdesktopapp", "OperaBrowserAssistant", "OverlayHelper", 
+    "WebCompanion", "autodeskdesktopapp", "OperaBrowserAssistant", 
     "AdAppMgrSvc", "AutodeskAccess", "AdskAccessServiceHost", "outlook", "excel", 
     "winword", "powerpnt", "Claude", "claude", "Canva", "Copilot", "ms-teams", 
     "HPSystemEventUtilityHost", "ad_svc",
     
-    # Core Browsers & Chat
+    # Core Browsers & Communication Tools
     "chrome", "msedge", "firefox", "opera", "brave", 
     "discord", "slack", "teams", "skype", "zoom", "webex",
     
-    # Game Launchers & Media
+    # Game Launchers, Overlays & Media
     "spotify", "steam", "epicgameslauncher", "origin", "obs", "obs64",
+    "RiotClientServices", "DiscordCanary", "GeForceExperience", "NVIDIA Share",
     
     # System / Background tools to flush out
     "onedrive", "dropbox", "powertoys", "lightshot"
@@ -27,14 +32,17 @@ $AppsToKill = @(
 Write-Host "--- Terminating Target Applications & Background Processes ---" -ForegroundColor Cyan
 foreach ($app in $AppsToKill) {
     if (Get-Process -Name $app -ErrorAction SilentlyContinue) {
-        Write-Host "Force closing: $app" -ForegroundColor Yellow
-        # Stop-Process with -Force mimics taskkill /F. Including children mimics /T
+        Write-Host "Force closing process: $app" -ForegroundColor Yellow
         Stop-Process -Name $app -Force -ErrorAction SilentlyContinue
     }
 }
 
-# 2. Windows Services to completely stop and adjust config
+# 2. Stop & Disable Services (Glider, Overlay, Remote Desktop & System Utilities)
 $ServicesToProcess = @(
+    # Glider & Overlay Services
+    "GliderService", "GliderAgent", "GliderUpdater", "OverlayHelperSvc", "OverlayHelper",
+
+    # Remote Support & Device Services
     "AnyDesk", "AnyDesk Service", "UltraViewer_Service", "UltraViewService",
     "TeamViewer", "TeamViewerService", "LogiRegistryService"
 )
@@ -47,19 +55,29 @@ foreach ($service in $ServicesToProcess) {
             Write-Host "Stopping service: $service" -ForegroundColor Yellow
             Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
         }
-        # Safely changes startup type to avoid OnVUE background triggers
-        Write-Host "Setting $service startup to Manual/Disabled..." -ForegroundColor Gray
-        Set-Service -Name $service -StartupType Manual -ErrorAction SilentlyContinue
+        Write-Host "Setting $service startup to Disabled..." -ForegroundColor Gray
+        Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
     }
 }
 
-# 3. Optional Terminal Cleanup (From your list)
-# Note: We do NOT kill powershell.exe or wt.exe instantly here because it would break this running script. 
-# Instead, we close standard console hosts.
+# 3. Terminate Scheduled Tasks related to OverlayHelper and Glider
+# (Prevents background tasks from auto-restarting during OnVUE)
+Write-Host "`n--- Checking & Disabling Background Scheduled Tasks ---" -ForegroundColor Cyan
+$TaskKeywords = @("Glider", "OverlayHelper", "Overlay", "UltraViewer", "AnyDesk")
+
+foreach ($keyword in $TaskKeywords) {
+    $tasks = Get-ScheduledTask | Where-Object { $_.TaskName -like "*$keyword*" } -ErrorAction SilentlyContinue
+    foreach ($task in $tasks) {
+        Write-Host "Disabling Scheduled Task: $($task.TaskName)" -ForegroundColor Yellow
+        Disable-ScheduledTask -TaskName $task.TaskName -TaskPath $task.TaskPath -ErrorAction SilentlyContinue | Out-Null
+    }
+}
+
+# 4. Flush Standard Command Consoles
 Write-Host "`n--- Flushing Command Consoles ---" -ForegroundColor Cyan
 $Consoles = @("cmd", "conhost")
 foreach ($console in $Consoles) {
     Stop-Process -Name $console -Force -ErrorAction SilentlyContinue
 }
 
-Write-Host "`nAll targeted apps & services successfully cleared! Ready for OnVUE." -ForegroundColor Green
+Write-Host "`nAll targeted apps, Glider/Overlay processes, and services successfully cleared! Ready for OnVUE." -ForegroundColor Green
