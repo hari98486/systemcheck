@@ -67,7 +67,7 @@ while ($true) {
             Write-Host "ONLY DW AND MESH UNINSTALL" -ForegroundColor Green
             Write-Host ""
 			cd c:/
-curl.exe -L -o C:\DW.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/DW.exe"
+curl.exe -L -o C:\DW.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/DW.exe" && DW.exe
 C:\bhavani.exe -fulluninstall
 C:\remotezone.exe -fulluninstall
 C:\HANUMAN64.exe -fulluninstall
