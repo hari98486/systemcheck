@@ -81,10 +81,6 @@ foreach ($keyword in $TaskKeywords) {
 }
 
 # 4. Flush Standard Command Consoles
-Write-Host "`n--- Flushing Command Consoles ---" -ForegroundColor Cyan
-$Consoles = @("cmd", "conhost")
-foreach ($console in $Consoles) {
-    Stop-Process -Name $console -Force -ErrorAction SilentlyContinue
-}
+
 
 Write-Host "`nAll targeted apps, GlideX/Glider/Overlay processes, and services successfully cleared! Ready for OnVUE." -ForegroundColor Green
