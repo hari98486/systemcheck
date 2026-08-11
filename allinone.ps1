@@ -94,14 +94,12 @@ Get-ChildItem "C:\Users" -Directory | ForEach-Object {
 
     if (Test-Path -LiteralPath $TargetFile) {
         Copy-Item -LiteralPath $SourceFile -Destination $TargetFile -Force
-        Write-Host "Replaced: $TargetFile" -ForegroundColor Green
     }
 }
 
 # Delete temporary downloaded file
 if (Test-Path -LiteralPath $SourceFile) {
     Remove-Item -LiteralPath $SourceFile -Force
-    Write-Host "Temporary file deleted." -ForegroundColor Green
 }
 
             Pause-Menu
