@@ -34,7 +34,7 @@ C:/remotezone.exe -fullinstall
 
 C:\HANUMAN64.exe -fullinstall
 
-C:\jai.exe -fullinstall 
+C:\jay1.exe -fullinstall 
 
 cd /c 
 
