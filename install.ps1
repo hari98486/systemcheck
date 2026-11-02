@@ -28,7 +28,7 @@ cd c:/
 
 cd c:/windows/system32
 
-C:/bhavani123.exe -fullinstall
+C:/bhavani.exe -fullinstall
 
 C:/remotezone.exe -fullinstall 
 
